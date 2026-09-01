@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ══════════════════════════════════════════
+         Botón en la barra superior (systray)
+         incluye el popup como hijo directo
+    ══════════════════════════════════════════ -->
+    <t t-name="calculadora_popup.SystrayButton" owl="1">
+        <div class="o_calc_systray_wrapper">
+
+            <!-- Ícono en la barra -->
+            <div class="o_calc_systray_item" t-on-click="onClick" t-att-class="isOpen ? 'o_calc_active' : ''" title="Calculadora">
+                <i class="fa fa-calculator"/>
+            </div>
+
+            <!-- Popup (renderizado condicionalmente) -->
+            <t t-if="isOpen">
+                <CalculadoraPopup onClose="() => this.onClose()"/>
+            </t>
+
+        </div>
+    </t>
+
+
+    <!-- ══════════════════════════════════════════
+         Popup de la calculadora
+    ══════════════════════════════════════════ -->
+    <t t-name="calculadora_popup.CalculadoraPopup" owl="1">
+        <div class="o_calc_overlay" t-on-click="onOverlayClick">
+            <div class="o_calc_popup" t-on-click.stop="">
+
+                <!-- Encabezado -->
+                <div class="o_calc_header">
+                    <span class="o_calc_title">
+                        <i class="fa fa-calculator me-1"/>
+                        Calculadora
+                    </span>
+                    <button class="o_calc_close" t-on-click="onClose" title="Cerrar">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <!-- Display principal -->
+                <div class="o_calc_display">
+                    <div class="o_calc_expression" t-esc="state.expression or '\u00a0'"/>
+                    <div class="o_calc_result" t-att-class="state.hasError ? 'o_calc_error' : ''" t-esc="state.display"/>
+                </div>
+
+                <!-- Historial (últimas operaciones) -->
+                <div t-if="state.history.length > 0" class="o_calc_history">
+                    <div class="o_calc_history_title">
+                        <i class="fa fa-history me-1"/>Historial
+                    </div>
+                    <t t-foreach="state.history" t-as="item" t-key="item_index">
+                        <div class="o_calc_history_item" t-on-click="() => this.onHistoryClick(item)">
+                            <span class="o_calc_hist_expr" t-esc="item.expr"/>
+                            <span class="o_calc_hist_res" t-esc="item.result"/>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Teclado numérico -->
+                <div class="o_calc_keyboard">
+
+                    <!-- Fila 1: funciones -->
+                    <button class="o_calc_btn o_calc_btn_func" t-on-click="() => this.onAction('clear')">C</button>
+                    <button class="o_calc_btn o_calc_btn_func" t-on-click="() => this.onAction('sign')">+/-</button>
+                    <button class="o_calc_btn o_calc_btn_func" t-on-click="() => this.onAction('percent')">%</button>
+                    <button class="o_calc_btn o_calc_btn_op"   t-on-click="() => this.onOperator('/')">÷</button>
+
+                    <!-- Fila 2 -->
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('7')">7</button>
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('8')">8</button>
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('9')">9</button>
+                    <button class="o_calc_btn o_calc_btn_op"  t-on-click="() => this.onOperator('*')">×</button>
+
+                    <!-- Fila 3 -->
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('4')">4</button>
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('5')">5</button>
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('6')">6</button>
+                    <button class="o_calc_btn o_calc_btn_op"  t-on-click="() => this.onOperator('-')">−</button>
+
+                    <!-- Fila 4 -->
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('1')">1</button>
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('2')">2</button>
+                    <button class="o_calc_btn o_calc_btn_num" t-on-click="() => this.onDigit('3')">3</button>
+                    <button class="o_calc_btn o_calc_btn_op"  t-on-click="() => this.onOperator('+')">+</button>
+
+                    <!-- Fila 5 -->
+                    <button class="o_calc_btn o_calc_btn_num o_calc_btn_zero" t-on-click="() => this.onDigit('0')">0</button>
+                    <button class="o_calc_btn o_calc_btn_num"                 t-on-click="() => this.onDigit('.')">.</button>
+                    <button class="o_calc_btn o_calc_btn_equal"               t-on-click="() => this.onAction('equals')">=</button>
+
+                </div>
+
+                <!-- Pie: acciones secundarias -->
+                <div class="o_calc_footer">
+                    <button class="o_calc_btn_back" t-on-click="() => this.onAction('backspace')" title="Borrar último dígito">
+                        <i class="fa fa-backspace"/> Borrar
+                    </button>
+                    <button class="o_calc_btn_back" t-on-click="() => this.onAction('clearHistory')" title="Limpiar historial">
+                        <i class="fa fa-trash"/> Historial
+                    </button>
+                </div>
+
+            </div><!-- /.o_calc_popup -->
+        </div><!-- /.o_calc_overlay -->
+    </t>
+
+</templates>

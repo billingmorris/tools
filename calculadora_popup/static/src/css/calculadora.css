@@ -1,0 +1,269 @@
+/* ══════════════════════════════════════════════
+   Calculadora Popup — Odoo 16
+══════════════════════════════════════════════ */
+
+/* ── Systray: ícono en barra superior ─────── */
+.o_calc_systray_wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.o_calc_systray_item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    transition: background 0.15s ease;
+    margin: 0 2px;
+}
+
+.o_calc_systray_item:hover,
+.o_calc_systray_item.o_calc_active {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── Overlay (fondo semitransparente) ─────── */
+.o_calc_overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-top: 52px;   /* altura de la barra de menú */
+    padding-right: 8px;
+    animation: o_calc_fade_in 0.12s ease;
+}
+
+@keyframes o_calc_fade_in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Popup principal ──────────────────────── */
+.o_calc_popup {
+    width: 280px;
+    background: #1e1e2e;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    animation: o_calc_slide_in 0.15s ease;
+    user-select: none;
+}
+
+@keyframes o_calc_slide_in {
+    from { transform: translateY(-12px); opacity: 0; }
+    to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* ── Header ───────────────────────────────── */
+.o_calc_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px 8px;
+    background: #13131f;
+}
+
+.o_calc_title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #a0a0c0;
+    letter-spacing: 0.03em;
+}
+
+.o_calc_close {
+    background: none;
+    border: none;
+    color: #6060a0;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.12s, background 0.12s;
+    line-height: 1;
+}
+.o_calc_close:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.08);
+}
+
+/* ── Display ──────────────────────────────── */
+.o_calc_display {
+    padding: 10px 16px 12px;
+    background: #13131f;
+    text-align: right;
+    border-bottom: 1px solid #2a2a40;
+}
+
+.o_calc_expression {
+    font-size: 12px;
+    color: #6060a0;
+    min-height: 16px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.o_calc_result {
+    font-size: 32px;
+    font-weight: 300;
+    color: #e8e8ff;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.o_calc_result.o_calc_error {
+    color: #ff6b6b;
+    font-size: 22px;
+}
+
+/* ── Historial ────────────────────────────── */
+.o_calc_history {
+    background: #16162a;
+    max-height: 100px;
+    overflow-y: auto;
+    border-bottom: 1px solid #2a2a40;
+}
+
+.o_calc_history::-webkit-scrollbar { width: 4px; }
+.o_calc_history::-webkit-scrollbar-track { background: transparent; }
+.o_calc_history::-webkit-scrollbar-thumb { background: #3a3a58; border-radius: 2px; }
+
+.o_calc_history_title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #5050a0;
+    padding: 6px 14px 2px;
+}
+
+.o_calc_history_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 14px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.o_calc_history_item:hover { background: rgba(255,255,255,0.04); }
+
+.o_calc_hist_expr {
+    font-size: 11px;
+    color: #6060a0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.o_calc_hist_res {
+    font-size: 12px;
+    font-weight: 600;
+    color: #a0b0ff;
+    margin-left: 8px;
+}
+
+/* ── Teclado ──────────────────────────────── */
+.o_calc_keyboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #2a2a40;
+    padding: 1px;
+}
+
+/* Botón base */
+.o_calc_btn {
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.1s, transform 0.07s;
+    border-radius: 0;
+    outline: none;
+}
+.o_calc_btn:active { transform: scale(0.92); filter: brightness(1.2); }
+
+/* Números */
+.o_calc_btn_num {
+    background: #252535;
+    color: #e0e0f8;
+}
+.o_calc_btn_num:hover { background: #2e2e48; }
+
+/* Funciones (C, +/-, %) */
+.o_calc_btn_func {
+    background: #2a2a48;
+    color: #a0b0e0;
+    font-size: 14px;
+    font-weight: 600;
+}
+.o_calc_btn_func:hover { background: #34345a; }
+
+/* Operadores */
+.o_calc_btn_op {
+    background: #5050c8;
+    color: #fff;
+    font-size: 20px;
+}
+.o_calc_btn_op:hover { background: #6060d8; }
+
+/* Igual */
+.o_calc_btn_equal {
+    background: #7c3aed;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+}
+.o_calc_btn_equal:hover { background: #8b4cf5; }
+
+/* Cero ocupa 2 columnas */
+.o_calc_btn_zero {
+    grid-column: span 2;
+    justify-content: flex-start;
+    padding-left: 24px;
+}
+
+/* ── Footer: borrar e historial ───────────── */
+.o_calc_footer {
+    display: flex;
+    gap: 1px;
+    background: #2a2a40;
+    padding: 1px;
+}
+
+.o_calc_btn_back {
+    flex: 1;
+    border: none;
+    background: #1e1e35;
+    color: #7080c0;
+    font-size: 12px;
+    padding: 8px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: background 0.12s, color 0.12s;
+}
+.o_calc_btn_back:hover {
+    background: #26263c;
+    color: #a0b0e0;
+}
+.o_calc_btn_back:last-child:hover { color: #ff8080; }
