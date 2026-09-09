@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_rut_import_wizard"
+              name="Importar desde RUT (PDF)"
+              parent="contacts.res_partner_menu_config"
+              action="rut_dian_import.action_rut_import_wizard"
+              sequence="50"/>
+
+</odoo>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_rut_import_wizard_form" model="ir.ui.view">
+        <field name="name">rut.import.wizard.form</field>
+        <field name="model">rut.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importar contacto desde RUT (PDF DIAN)">
+                <field name="state" invisible="1"/>
+
+                <!-- ETAPA 1: cargar PDF -->
+                <group attrs="{'invisible': [('state', '!=', 'draft')]}">
+                    <p class="text-muted">
+                        Adjunte el PDF del RUT (Registro Único Tributario) expedido por
+                        la DIAN. El sistema leerá el documento mediante OCR y le
+                        permitirá revisar los datos antes de crear el contacto.
+                    </p>
+                    <field name="pdf_filename" invisible="1"/>
+                    <field name="pdf_file" filename="pdf_filename" required="1"/>
+                    <field name="existing_partner_id"
+                           string="Actualizar un contacto existente (opcional)"/>
+                </group>
+
+                <!-- ETAPA 2: revisar / editar datos extraídos -->
+                <group attrs="{'invisible': [('state', '=', 'draft')]}">
+                    <p class="text-muted" attrs="{'invisible': [('state', '!=', 'preview')]}">
+                        Revise y corrija los datos reconocidos antes de crear el
+                        contacto. El OCR sobre un formulario escaneado puede
+                        contener errores.
+                    </p>
+                    <group string="Identificación" col="4">
+                        <field name="company_type" widget="radio"/>
+                        <field name="name" colspan="4"/>
+                        <field name="trade_name"/>
+                        <field name="vat_number" string="NIT"/>
+                        <field name="vat_dv" string="DV"/>
+                    </group>
+                    <group string="Ubicación" col="4">
+                        <field name="street" colspan="4"/>
+                        <field name="city"/>
+                        <field name="state_id"/>
+                        <field name="country_id"/>
+                    </group>
+                    <group string="Contacto" col="4">
+                        <field name="email" widget="email"/>
+                        <field name="phone"/>
+                        <field name="mobile"/>
+                    </group>
+                    <group string="Representante legal" col="4">
+                        <field name="create_legal_rep_contact"/>
+                        <field name="legal_rep_name" colspan="3"/>
+                        <field name="legal_rep_doc_type"/>
+                        <field name="legal_rep_vat"/>
+                    </group>
+                    <group string="Texto reconocido (depuración)"
+                           attrs="{'invisible': [('state', '=', 'done')]}">
+                        <field name="raw_text" nolabel="1" readonly="1"
+                               widget="text"/>
+                    </group>
+                </group>
+
+                <!-- ETAPA 3: contacto creado -->
+                <group attrs="{'invisible': [('state', '!=', 'done')]}">
+                    <field name="partner_id"/>
+                </group>
+
+                <footer>
+                    <button name="action_extract" type="object"
+                            string="Extraer datos del PDF" class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_create_partner" type="object"
+                            string="Crear contacto" class="btn-primary"
+                            attrs="{'invisible': [('state', '!=', 'preview')]}"/>
+                    <button name="action_back_to_draft" type="object"
+                            string="Volver a cargar otro PDF"
+                            attrs="{'invisible': [('state', '!=', 'preview')]}"/>
+                    <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rut_import_wizard" model="ir.actions.act_window">
+        <field name="name">Importar contacto desde RUT (PDF)</field>
+        <field name="res_model">rut.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
